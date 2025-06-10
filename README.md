@@ -14,8 +14,6 @@ This exported Jupyter notebook guides you through building an end-to-end pipelin
 You’ll piece together multiple models—OpenCV’s Haar cascades, a ResNet-50 dog detector, and a custom CNN breed classifier—into a single user-facing algorithm  
 
 ---
-
-## The Road Ahead  
 We break the notebook into separate steps. Feel free to jump to any section:
 
 - **Step 0:** Import Datasets  
@@ -65,9 +63,9 @@ Run `predict_breed` on sample human, dog, and random images to visually verify o
 dog_app.html            # This exported notebook
 bottleneck_features/    # .npz files for each pretrained CNN
 saved_models/           # Checkpointed weights:
-# ├─ weights.best.from_scratch.keras
-# ├─ weights.best.VGG16.keras
-# └─ weights.best.Xception.keras
+  ├─ weights.best.from_scratch.keras
+  ├─ weights.best.VGG16.keras
+  └─ weights.best.Xception.keras
 haarcascades/           # Pretrained face detector XML
 images/                 # Sample output screenshots
 
@@ -82,21 +80,21 @@ images/                 # Sample output screenshots
 
 ```bash
 pip install tensorflow keras scikit-learn opencv-python numpy pillow jupyter
-
+```
+***************************************************************
 ## Q & A
 __Question 1:__ Use the code cell below to test the performance of the `face_detector` function.  
 - What percentage of the first 100 images in `human_files` have a detected human face?  
 - What percentage of the first 100 images in `dog_files` have a detected human face? 
 
-***************************************************************
 __Answer:__ 
 
 - 100% of the first 100 human images contain human faces
 - 12% of the first 100 dog images contain human faces
+***************************************************************
 
 __Question 2:__ This algorithmic choice necessitates that we communicate to the user that we accept human images only when they provide a clear view of a face (otherwise, we risk having unneccessarily frustrated users!). In your opinion, is this a reasonable expectation to pose on the user? If not, can you think of a way to detect humans in images that does not necessitate an image with a clearly presented face?
 
-***************************************************************
 __Answer:__
 
 Looking at the code, I can suggest several ways to detect humans in images without relying solely on face detection:
@@ -120,20 +118,20 @@ This is somewhat restrictive for users. A more flexible approach using one of th
 - Being more robust to varied lighting and poses
 
 So while face detection is straightforward to implement, it may not be the most user-friendly approach. I would recommend considering one of the more robust person detection methods mentioned above for better usability.
+***************************************************************
 
 __Question 3:__ Use the code cell below to test the performance of your `dog_detector` function.  
 - What percentage of the images in `human_files_short` have a detected dog?  
 - What percentage of the images in `dog_files_short` have a detected dog?
 
-***************************************************************
 __Answer:__ 
 
 - 0.0% of the first 100 human images are detected as dogs
 - 100.0% of the first 100 dog images are detected as dogs
 
+***************************************************************
 __Question 4:__ Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  If you chose to use the hinted architecture above, describe why you think that CNN architecture should work well for the image classification task.
 
-***************************************************************
 __Answer:__ 
 
 ### Final CNN — Step by Step
@@ -148,8 +146,6 @@ __Answer:__
 | **6. On-graph data augmentation**<br>`Flip + Rotate + Zoom + Translate` | Simulate more variety (pose, scale). | +1–2 pp and smoother learning. |
 | **7. Hyper-param polish**<br>512-unit head + Dropout 0.5, batch 32 | Final balance of capacity vs generalisation. | Stable best performance. |
 
----
-
 #### **Xception model**
 
 * **Pre-trained on ImageNet** → already encodes generic visual features.  
@@ -159,13 +155,13 @@ __Answer:__
 * **Data augmentation + Dropout** → essential regularization for a ~20 k-image dataset.
 
 _Result:_ ** 85 %** top-1 accuracy, comfortably above the project requirement.
+***************************************************************
 
 __Question 5:__ Outline the steps you took to get to your final CNN architecture and your reasoning at each step.  Describe why you think the architecture is suitable for the current problem.
 
-***************************************************************
 __Answer:__ 
 
-### Final CNN
+#### Final CNN
 
 | Step | What I tried | Why I tried it | What happened / next move |
 |------|--------------|---------------|---------------------------|
@@ -177,8 +173,6 @@ __Answer:__
 | **6. Light data-aug in `tf.data`**<br>`RandomFlip`, `Rotation ±10°`, `Zoom 15 %` | Add pose/scale variety; cut over-fit. | +1 pp & smoother learning curves. |
 | **7. Hyper-param tidy-up**<br>Batch 32, Dropout 0.5, EarlyStopping | Balance capacity vs. generalization. | Locked-in best checkpoint. |
 
----
-
 #### Fine-tuned **Xception** 
 
 * **Pre-trained on ImageNet** → already knows generic edges, colors, and textures.
@@ -188,15 +182,13 @@ __Answer:__
 * **Augmentation + Dropout** → regularize the head and improve robustness to pose, lighting, and scale.
 
 **Result:** *≈ 85 %* top-1 accuracy over 133 breeds — comfortably above the project requirement while remaining lightweight and fast to infer.
+***************************************************************
 
 __Question 6:__ Is the output better than you expected :) ?  Or worse :( ?  Provide at least three possible points of improvement for your algorithm.
 
-***************************************************************
 __Answer:__ 
 
 Yes — getting **≈ ~85 %† top-1 accuracy across 133 breeds** is better than I honestly thought possible on a modest dataset. Many breeds look almost identical (e.g. Malamute vs. Husky), so I expected something in the high-70 % range.
-
----
 
 ### Three quick ideas to push accuracy even further
 
